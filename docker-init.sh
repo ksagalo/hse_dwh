@@ -1,3 +1,6 @@
+#!/bin/sh
+set -e
+
 echo "Clearing data"
 rm -rf ./data
 rm -rf ./data-slave
