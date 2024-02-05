@@ -307,3 +307,18 @@ ALTER TABLE dwh_detailed.sat_purchase
 ADD CONSTRAINT fk_purchase_key
 FOREIGN KEY ("purchase_key")
 REFERENCES dwh_detailed.hub_purchases("purchase_key");
+
+CREATE TABLE IF NOT EXISTS presentation.customers_categories (
+    created_at        TIMESTAMP,
+    customer_id       INT,
+    customer_gmv      DECIMAL(9, 2),
+    customer_category VARCHAR(255),
+    customer_group    VARCHAR(5)
+);
+
+create table IF NOT EXISTS presentation.category_gmv (
+    created_at        TIMESTAMP,
+    business_date     DATE,
+    customer_category VARCHAR(255),
+    customer_gmv      DECIMAL(9, 2)
+);

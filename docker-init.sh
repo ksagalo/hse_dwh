@@ -23,14 +23,19 @@ docker compose up -d postgres_slave
 sleep 30
 echo "Done"
 
-docker compose up -d postgres_dwh zookeeper broker debezium debezium-ui rest-proxy
+docker compose up -d --remove-orphans --force-recreate postgres_dwh zookeeper broker debezium debezium-ui schema-registry rest-proxy
 
 curl -X POST --location "http://localhost:8083/connectors" -H "Content-Type: application/json" -H "Accept: application/json" -d @debezium/debezium.json
 curl -X POST -H "Content-Type: application/vnd.kafka.v2+json" -H "Accept: application/vnd.kafka.v2+json" -d '{"name": "dwh", "format": "binary", "auto.offset.reset": "latest"}' http://localhost:8082/consumers/dwh
 
+sleep 60
+docker compose up -d dmp
+
 cd airflow && docker compose up -d
 sleep 30  # wait
 docker exec airflow-airflow-webserver-1 airflow connections add 'postgres_dwh' --conn-type 'postgres' \
-sleep 60
-
-cd .. && python3 consumer.py
+--conn-host 'localhost' \
+--conn-login 'postgres' \
+--conn-password 'postgres' \
+--conn-port 5434 \
+--conn-schema 'postgres'
